@@ -140,7 +140,7 @@ button {
     top: 337px;
     transform: translateX(-50%);
     width: 143.67px;
-    height: 40px;
+    height: 46px;
     border: 1px solid #FFF;
     background: transparent;
     border-radius: 20px;
@@ -260,3 +260,72 @@ footer a {
     color: #003;
 }
 
+
+
+
+
+
+/* Media Queries */
+
+
+@media (max-width: 768px) {
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        width: 100%;
+        padding: 20px;
+        box-shadow: none;
+    }
+
+    .form-container form {
+        padding: 0 10px;
+    }
+
+    .form-container {
+        padding: 0 20px;
+    }
+
+    .social-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .social-container a {
+        margin: 10px 0;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    p {
+        font-size: 12px;
+    }
+
+    input {
+        padding: 10px;
+    }
+
+    button {
+        padding: 10px 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 11px;
+    }
+
+    p {
+        font-size: 8px;
+    }
+
+    button {
+        padding: 4px 10px;
+    }
+}
