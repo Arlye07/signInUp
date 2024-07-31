@@ -165,6 +165,13 @@ button {
     height: 105%;
     width:auto;
     transition: 0.6s ease-in-out;
+
+    background-image: url('./foto/lago\ altura.jpg'); /* Cambia 'tu-imagen.jpg' por el nombre de tu imagen */
+    font-family: 'Poppins', sans-serif;
+    background-size: cover; /* Para cubrir toda el área del fondo */
+    background-position: center; /* Centrar la imagen */
+    background-repeat: no-repeat; /* Evitar que la imagen se repita */
+    background-color: rgba(246, 245, 247, 0.9); /* Color de fondo translúcido encima de la imagen */
 }
 .overlay-left {
     right: 60%;
