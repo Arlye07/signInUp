@@ -1,146 +1,3 @@
-// const express = require("express");
-// const path = require("path");
-// const bcrypt = require("bcrypt");
-// const collection = require("./config");
-// const helmet = require("helmet");
-
-// const app = express();
-// //convert data en JSON format
-// app.use(express.json());
-
-// app.use(express.urlencoded({ extended: false }));
-
-// app.use(
-//   helmet.contentSecurityPolicy({
-//     directives: {
-//       defaultSrc: ["'none'"],
-//       imgSrc: ["'self'", "http://localhost:"],
-//       // Agrega más directivas según sea necesario
-//     },
-//   })
-// );
-
-// //use ejs
-// app.set("view engine", "ejs");
-// //static
-// app.use(express.static("public"));
-
-// app.get("/", (req, res) => {
-//   res.render("login");
-// });
-// app.get("/signup", (req, res) => {
-//   res.render("signup");
-// });
-
-// //Register user
-// app.post("/signup", async (req, res) => {
-//   try {
-//     const data = {
-//       name: req.body.username,
-//       password: req.body.password,
-//     };
-
-//     const userdata = await collection.insertMany(data);
-//     res.status(201).json(userdata);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Error registering new user" });
-//   }
-// });
-// // Inicio de sesión
-// app.post("/login", async (req, res) => {
-//   try {
-//     const user = await User.findOne({ name: req.body.username });
-//     if (user && (await bcrypt.compare(req.body.password, user.password))) {
-//       res.status(200).json({ message: "Login successful" });
-//     } else {
-//       res.status(400).json({ error: "Invalid username or password" });
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Error logging in" });
-//   }
-// });
-
-// const port = 5000;
-// app.listen(port, () => {
-//   console.log(`Server running on Port:${port})`);
-// });
-
-// ///////////
-
-// const express = require("express");
-// const path = require("path");
-// const bcrypt = require("bcrypt");
-// const mongoose = require("mongoose");
-// const helmet = require('helmet');
-
-// const app = express();
-
-// // Configura tu conexión a MongoDB
-// mongoose.connect('mongodb://localhost:27017/tuBaseDeDatos', {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true
-// }).then(() => {
-//     console.log('Connected to MongoDB');
-// }).catch(err => {
-//     console.error('Failed to connect to MongoDB', err);
-// });
-
-// // Define el esquema y modelo de usuario
-// const userSchema = new mongoose.Schema({
-//     name: String,
-//     password: String
-// });
-
-// const User = mongoose.model('User', userSchema);
-
-// // Convertir datos a formato JSON
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
-
-// // Configuración de helmet para CSP
-// app.use(
-//     helmet.contentSecurityPolicy({
-//       directives: {
-//         defaultSrc: ["'none'"],
-//         imgSrc: ["'self'", "http://localhost:"],
-//         // Agrega más directivas según sea necesario
-//       },
-//     })
-// );
-
-// // Configuración de ejs
-// app.set('view engine', 'ejs');
-
-// // Archivos estáticos
-// app.use(express.static("public"));
-
-// // Rutas
-// app.get("/", (req, res) => {
-//     res.render('login');
-// });
-
-// app.get("/signup", (req, res) => {
-//     res.render('signup');
-// });
-
-// // Registro de usuario
-// app.post("/signup", async (req, res) => {
-//     try {
-//         const hashedPassword = await bcrypt.hash(req.body.password, 10); // Hashea la contraseña
-//         const user = new User({
-//             name: req.body.username,
-//             password: hashedPassword
-//         });
-//         const newUser = await user.save();
-//         res.status(201).json(newUser);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ error: 'Error registering new user' });
-//     }
-// });
-
 const express = require("express");
 const path = require("path");
 const bcrypt = require("bcrypt");
@@ -162,6 +19,7 @@ mongoose.connect('mongodb://localhost:27017/login', {
 // Define el esquema y modelo de usuario
 const userSchema = new mongoose.Schema({
     name: String, // El nombre de usuario se almacena sin hashear
+    email: { type: String, unique: true }, // El correo electrónico debe ser único
     password: String // La contraseña se almacena hasheada
 });
 
@@ -203,6 +61,7 @@ app.post("/signup", async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, 10); // Hashea la contraseña
         const user = new User({
             name: req.body.username, // Almacena el nombre sin hashear
+            email: req.body.email, // Almacena el correo electrónico
             password: hashedPassword // Almacena la contraseña hasheada
         });
         const newUser = await user.save();
@@ -216,11 +75,11 @@ app.post("/signup", async (req, res) => {
 // Inicio de sesión
 app.post("/login", async (req, res) => {
     try {
-        const user = await User.findOne({ name: req.body.username });
+        const user = await User.findOne({ email: req.body.email });
         if (user && await bcrypt.compare(req.body.password, user.password)) {
             res.status(200).json({ message: 'Login successful' });
         } else {
-            res.status(400).json({ error: 'Invalid username or password' });
+            res.status(400).json({ error: 'Invalid email or password' });
         }
     } catch (error) {
         console.error(error);
@@ -232,3 +91,5 @@ const port = 5000;
 app.listen(port, () => {
     console.log(`Server running on Port:${port}`);
 });
+
+///////////////////
