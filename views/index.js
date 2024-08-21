@@ -34,18 +34,19 @@ app.use(
     helmet.contentSecurityPolicy({
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"], // Permitir scripts en línea y desde cdnjs
-            styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com"],
-            imgSrc: ["'self'", "data:", "https:"], // Permitir imágenes desde orígenes seguros
-            connectSrc: ["'self'", "http://localhost:5000/"], // Permitir conexiones a tu API
-            fontSrc: ["'self'","https://cdnjs.cloudflare.com", "https://fonts.gstatic.com"], // Permitir fuentes desde Google Fonts
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"], // Agregamos cdn.jsdelivr.net
+            styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: ["'self'", "http://localhost:5000/"],
+            fontSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://fonts.gstatic.com"],
             frameSrc: ["'none'"],
             objectSrc: ["'none'"],
             upgradeInsecureRequests: []
         },
     })
 );
-  
+
+
 
 // Configuración de ejs
 app.set('view engine', 'ejs');
@@ -53,6 +54,7 @@ app.set('views', path.join(__dirname, '/')); // Asegúrate de que el directorio 
 
 // Archivos estáticos
 app.use(express.static(path.join(__dirname, '../')));
+
 
 // Rutas
 app.get("/", (req, res) => {
@@ -67,6 +69,13 @@ app.get("/login", (req, res) => {
     res.render('login'); // Renderizar la página de inicio de sesión independiente
 });
 
+// Ruta para servir la página HTML después de iniciar sesión
+app.get('/home', (req, res) => {
+    res.sendFile(path.join(__dirname, '/home.html')); // Asegúrate de que la ruta sea correcta
+});
+
+
+// Registro de usuario
 // Registro de usuario
 app.post("/signup", async (req, res) => {
     try {
@@ -76,20 +85,23 @@ app.post("/signup", async (req, res) => {
             email: req.body.email,
             password: hashedPassword
         });
-        const newUser = await user.save();
-        res.status(201).json({ success: true, message: 'User registered successfully' });
+        await user.save();
+        // Redirigir al login después de un registro exitoso
+        res.redirect('/login');
     } catch (error) {
         console.error(error);
+        // Si hay un error (por ejemplo, email duplicado), puedes mostrar un mensaje o redirigir a otra página.
         res.status(500).json({ success: false, message: 'Error registering new user' });
     }
 });
+
 
 // Inicio de sesión
 app.post("/login", async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email });
         if (user && await bcrypt.compare(req.body.password, user.password)) {
-            res.status(200).json({ success: true, message: 'Login successful' });
+            res.redirect('/home');
         } else {
             res.status(400).json({ success: false, message: 'Invalid email or password' });
         }
